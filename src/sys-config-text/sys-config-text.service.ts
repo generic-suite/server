@@ -72,4 +72,13 @@ export class SysConfigTextService {
       msg: '查询成功',
     };
   }
+
+  async remove(id: number) {
+    await this.sysConfigTextRepository.delete(id);
+    return {
+      code: 200,
+      msg: '操作成功',
+      success: true,
+    };
+  }
 }

@@ -25,4 +25,12 @@ export class SysConfigTextController {
   findAll(@Query() query: UpdateSysConfigTextDto) {
     return this.sysConfigTextService.findAll(query);
   }
+
+  // 删除
+  @UseGuards(new RbacGuard(role.ADMIN))
+  @UseGuards(AuthGuard('jwt'))
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.sysConfigTextService.remove(+id);
+  }
 }

@@ -3,7 +3,7 @@ import { CreateGoodDto } from './dto/create-good.dto';
 import { UpdateGoodDto } from './dto/update-good.dto';
 
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { Good } from './entities/good.entity';
 
 @Injectable()
@@ -31,9 +31,11 @@ export class GoodsService {
   async findAll(query) {
     const { pageSize = 10, current = 1, ...otherParams } = query;
 
-    const where = {
-      ...otherParams,
-    };
+    const where = {};
+    if (otherParams.good_name) {
+      where['good_name'] = Like(`%${otherParams.good_name}%`);
+    }
+
     const [list, total] = await this.goodRepository.findAndCount({
       where,
       skip: pageSize * (current - 1),

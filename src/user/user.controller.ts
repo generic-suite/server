@@ -18,6 +18,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from '../auth/auth.service';
 import { UserService } from './user.service';
+import { MidUserService } from '../mid-user/mid-user.service';
 import { ValidationPipe } from '../pipe/validation/validation.pipe';
 import { RegisterInfoDTO } from './dto/user.dto';
 import { RbacGuard } from 'src/guards/rbac/rbac.guard';
@@ -28,6 +29,7 @@ export class UserController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
+    private readonly midUserService: MidUserService,
   ) {}
 
   // JWT验证 - Step 1: 用户请求登录
@@ -94,5 +96,20 @@ export class UserController {
         success: false,
       };
     }
+  }
+
+  // 获取用户信息
+  @UseGuards(new RbacGuard(role.HUMAN))
+  @UseGuards(AuthGuard('jwt'))
+  @Post('getUserInfo')
+  async getUserInfo(@Request() req: any) {
+    const user = await this.midUserService.getUserInfo(req.user.userId);
+    console.log('🚀  file: user.controller.ts:107  UserController  getUserInfo  user:', user)
+    return {
+      code: 200,
+      msg: '查询成功',
+      data: user,
+      success: true,
+    };
   }
 }

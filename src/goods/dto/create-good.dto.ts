@@ -5,7 +5,7 @@ export class CreateGoodDto {
   readonly good_name: string;
 
   @IsNotEmpty({ message: '商品图片不能为空' })
-  readonly img: string;
+  readonly good_img: string;
 
   @IsNotEmpty({ message: '价格不能为空' })
   readonly price: number;

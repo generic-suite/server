@@ -10,9 +10,9 @@ import { Good } from './entities/good.entity';
 export class GoodsService {
   constructor(@InjectRepository(Good) private readonly goodRepository: Repository<Good>) {}
   async create(createGoodDto: CreateGoodDto) {
-    const { name, img, price, good_desc = '' } = createGoodDto;
+    const { good_name, img, price, good_desc = '' } = createGoodDto;
     const good = {
-      good_name: name,
+      good_name: good_name,
       good_img: img,
       price: price,
       good_desc: good_desc,
@@ -62,9 +62,9 @@ export class GoodsService {
 
   async update(id: number, updateGoodDto: UpdateGoodDto) {
     // 改数据
-    const { name, img, price, good_desc = '' } = updateGoodDto;
+    const { good_name, img, price, good_desc = '' } = updateGoodDto;
     const good = {
-      good_name: name,
+      good_name: good_name,
       good_img: img,
       price: price,
       good_desc: good_desc,

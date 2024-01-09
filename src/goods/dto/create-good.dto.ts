@@ -2,7 +2,7 @@ import { IsNotEmpty, IsNumber, IsString, isNotEmpty, isNumber } from 'class-vali
 
 export class CreateGoodDto {
   @IsNotEmpty({ message: '商品名称不能为空' })
-  readonly name: string;
+  readonly good_name: string;
 
   @IsNotEmpty({ message: '商品图片不能为空' })
   readonly img: string;

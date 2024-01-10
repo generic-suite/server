@@ -75,7 +75,7 @@ export class MidOrderService {
     const goodsList = await this.goodsService.findAllGoods();
     // 5. 过滤出用户可以购买的商品列表
     const canBuyGoodsList = goodsList.filter((item) => {
-      return item.price >= userPrice_min && item.price <= userPrice_max;
+      return +item.price >= userPrice_min && +item.price <= userPrice_max;
     });
     // 5.1 如果没有可以购买的商品
     if (canBuyGoodsList.length === 0) {
@@ -94,8 +94,8 @@ export class MidOrderService {
       user_id: userId,
       goods_id: randomGood.id,
       goods_num: 1,
-      order_amount: randomGood.price * 1,
-      order_commission: (vipData.return_rate / 100) * randomGood.price * 1,
+      order_amount: +randomGood.price * 1,
+      order_commission: (vipData.return_rate / 100) * +randomGood.price * 1,
       order_status: 1,
       commission_status: 1,
       order_no: orderNo,

@@ -8,7 +8,7 @@ export class CreateGoodDto {
   readonly good_img: string;
 
   @IsNotEmpty({ message: '价格不能为空' })
-  readonly price: number;
+  readonly price: string;
 
   // 可选的属性不需要加上@IsNotEmpty() 装饰器
   readonly good_desc?: string;

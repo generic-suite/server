@@ -104,7 +104,6 @@ export class UserController {
   @Post('getUserInfo')
   async getUserInfo(@Request() req: any) {
     const user = await this.midUserService.getUserInfo(req.user.userId);
-    console.log('🚀  file: user.controller.ts:107  UserController  getUserInfo  user:', user)
     return {
       code: 200,
       msg: '查询成功',

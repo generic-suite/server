@@ -24,10 +24,12 @@ export class Good {
 
   // 价格
   @Column({
-    type: 'int',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
     comment: '价格',
   })
-  price: number;
+  price: string;
 
   // 创建时间
   @Column({

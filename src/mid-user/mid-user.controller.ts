@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UsePipes } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Query, Delete, UseGuards, UsePipes } from '@nestjs/common';
 import { MidUserService } from './mid-user.service';
 import { CreateMidUserDto } from './dto/create-mid-user.dto';
 import { UpdateMidUserDto } from './dto/update-mid-user.dto';
@@ -44,5 +44,13 @@ export class MidUserController {
     const { userId } = body;
     await this.midUserService.resetTask(userId);
     return;
+  }
+
+  // 查询所有用户
+  @UseGuards(new RbacGuard(role.ADMIN))
+  @UseGuards(AuthGuard('jwt'))
+  @Get()
+  async findAll(@Query() query: any) {
+    return await this.midUserService.findAll(query);
   }
 }

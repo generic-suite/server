@@ -4,7 +4,7 @@ import { UpdateMidUserDto } from './dto/update-mid-user.dto';
 import { SubmitOrderDto } from './dto/submit-order.dto';
 
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { MidUser } from './entities/mid-user.entity';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
@@ -126,5 +126,34 @@ export class MidUserService {
     midUser.today_trade_money = updateMidUserDto.today_trade_money;
     const data = await this.midUserRepository.save(midUser);
     return data;
+  }
+
+  // 查询所有用户
+  async findAll(query) {
+    const { pageSize = 10, current = 1, ...otherParams } = query;
+
+    const where = {};
+    if (otherParams.username) {
+      where['username'] = Like(`%${otherParams.username}%`);
+    }
+
+    const [list, total] = await this.midUserRepository.findAndCount({
+      where,
+      skip: pageSize * (current - 1),
+      take: pageSize,
+    });
+    return {
+      code: 200,
+      data: {
+        list,
+        pagination: {
+          total,
+          pageSize,
+          current,
+        },
+      },
+      success: true,
+      msg: '操作成功',
+    };
   }
 }

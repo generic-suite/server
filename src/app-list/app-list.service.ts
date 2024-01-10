@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateAppListDto } from './dto/create-app-list.dto';
 import { UpdateAppListDto } from './dto/update-app-list.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Like } from 'typeorm';
 import { AppList } from './entities/app-list.entity';
 
 @Injectable()
@@ -26,14 +26,30 @@ export class AppListService {
     };
   }
 
-  async findAll() {
+  async findAll(query) {
+    const { pageSize = 10, current = 1, ...otherParams } = query;
+    const where = {};
+    if (otherParams.name) {
+      where['name'] = Like(`%${otherParams.name}%`);
+    }
     // 查询所有
-    const list = await this.appListRepository.find();
+    const [list, total] = await this.appListRepository.findAndCount({
+      where,
+      skip: pageSize * (current - 1),
+      take: pageSize,
+    });
     return {
       code: 200,
       msg: '操作成功',
+      data: {
+        list,
+        pagination: {
+          total,
+          pageSize,
+          current,
+        },
+      },
       success: true,
-      data: list,
     };
   }
 

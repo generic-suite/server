@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { AppListService } from './app-list.service';
 import { CreateAppListDto } from './dto/create-app-list.dto';
 import { UpdateAppListDto } from './dto/update-app-list.dto';
@@ -13,8 +13,8 @@ export class AppListController {
   }
 
   @Get()
-  findAll() {
-    return this.appListService.findAll();
+  findAll(@Query() query: any) {
+    return this.appListService.findAll(query);
   }
 
   @Get(':id')

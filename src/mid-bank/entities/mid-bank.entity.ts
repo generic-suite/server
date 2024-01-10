@@ -19,6 +19,7 @@ export class MidBank {
     type: 'varchar',
     length: 50,
     comment: '银行名称',
+    default: '',
   })
   bank_name: string;
 
@@ -27,6 +28,7 @@ export class MidBank {
     type: 'varchar',
     length: 50,
     comment: '银行卡号',
+    default: '',
   })
   bank_card: string;
 
@@ -35,6 +37,7 @@ export class MidBank {
     type: 'varchar',
     length: 50,
     comment: '银行账户名',
+    default: '',
   })
   bank_account: string;
 
@@ -43,6 +46,7 @@ export class MidBank {
     type: 'varchar',
     length: 50,
     comment: '分行名称',
+    default: '',
   })
   branch_name: string;
 
@@ -51,6 +55,7 @@ export class MidBank {
     type: 'varchar',
     length: 50,
     comment: '分行代码',
+    default: '',
   })
   branch_number: string;
 
@@ -63,7 +68,6 @@ export class MidBank {
   })
   remark: string;
 
-
   // 创建时间
   @CreateDateColumn()
   @Exclude()
@@ -73,5 +77,4 @@ export class MidBank {
   @UpdateDateColumn()
   @Exclude()
   updated_at: Date;
-
 }

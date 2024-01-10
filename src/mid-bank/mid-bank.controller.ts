@@ -26,4 +26,22 @@ export class MidBankController {
   findAll(@Request() req: any) {
     return this.midBankService.findData(req.user.userId);
   }
+
+  // 查询其他用户的银行卡信息
+  @UsePipes(new ValidationPipe()) // 校验字段
+  @UseGuards(new RbacGuard(role.ADMIN)) // 校验权限
+  @UseGuards(AuthGuard('jwt')) // 校验是否合法用户
+  @Get('getCard/:userId')
+  findOtherUserCard(@Param('userId') userId: number) {
+    return this.midBankService.findData(userId);
+  }
+
+  // 设置其他用户的银行卡信息
+  @UsePipes(new ValidationPipe()) // 校验字段
+  @UseGuards(new RbacGuard(role.ADMIN)) // 校验权限
+  @UseGuards(AuthGuard('jwt')) // 校验是否合法用户
+  @Post('setCard/:userId')
+  saveOtherUserCard(@Body() saveMidBankDto: SaveMidBankDto, @Param('userId') userId: number) {
+    return this.midBankService.save(saveMidBankDto, userId);
+  }
 }

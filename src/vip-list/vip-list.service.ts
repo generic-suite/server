@@ -48,6 +48,14 @@ export class VipListService {
     return data;
   }
 
+  // 根据vip等级查询
+  async findOneByLevel(level: number) {
+    const data = await this.vipRepository.findOneBy({
+      level,
+    });
+    return data;
+  }
+
   async update(id: number, updateVipListDto: UpdateVipListDto) {
     // 更新数据
     await this.vipRepository.update(id, updateVipListDto);

@@ -26,6 +26,7 @@ import { VipListModule } from './vip-list/vip-list.module';
 import { MidVipModule } from './mid-vip/mid-vip.module';
 import { MidUserModule } from './mid-user/mid-user.module';
 import { MidWalletFlowModule } from './mid-wallet-flow/mid-wallet-flow.module';
+import { MidWithdrawModule } from './mid-withdraw/mid-withdraw.module';
 import envConfig from '../config/env';
 
 @Module({
@@ -80,6 +81,7 @@ import envConfig from '../config/env';
     MidVipModule,
     MidUserModule,
     MidWalletFlowModule,
+    MidWithdrawModule,
   ],
   controllers: [AppController, UserController],
   providers: [AppService],

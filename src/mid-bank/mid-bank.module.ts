@@ -8,5 +8,6 @@ import { MidUserModule } from 'src/mid-user/mid-user.module';
   imports: [TypeOrmModule.forFeature([MidBank]), MidUserModule],
   controllers: [MidBankController],
   providers: [MidBankService],
+  exports: [MidBankService],
 })
 export class MidBankModule {}

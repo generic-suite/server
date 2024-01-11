@@ -157,4 +157,10 @@ export class MidUserService {
       msg: '操作成功',
     };
   }
+
+  // 获取用户的vip等级信息
+  async getVipInfo(level_id: number) {
+    const vipInfo = await this.vipListService.findOneByLevel(level_id);
+    return vipInfo;
+  }
 }

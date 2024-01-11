@@ -33,9 +33,12 @@ export class MidWithdrawController {
     return this.midWithdrawService.findOne(+id);
   }
 
+  @UsePipes(new ValidationPipe()) // 校验字段
+  @UseGuards(new RbacGuard(role.ADMIN)) // 校验权限
+  @UseGuards(AuthGuard('jwt')) // 校验是否合法用户
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMidWithdrawDto: UpdateMidWithdrawDto) {
-    return this.midWithdrawService.update(+id, updateMidWithdrawDto);
+  update(@Param('id') id: string, @Body() updateMidWithdrawDto: UpdateMidWithdrawDto, @Request() req: any) {
+    return this.midWithdrawService.update(+id, updateMidWithdrawDto, req.user);
   }
 
   @Delete(':id')

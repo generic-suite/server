@@ -7,6 +7,7 @@ import { Repository, Like } from 'typeorm';
 import { MidWithdraw } from './entities/mid-withdraw.entity';
 import { MidUserService } from 'src/mid-user/mid-user.service';
 import { MidBankService } from 'src/mid-bank/mid-bank.service';
+import * as Moment from 'moment'; // 处理时间的工具
 @Injectable()
 export class MidWithdrawService {
   constructor(
@@ -112,9 +113,16 @@ export class MidWithdrawService {
   findOne(id: number) {
     return `This action returns a #${id} midWithdraw`;
   }
-
-  update(id: number, updateMidWithdrawDto: UpdateMidWithdrawDto) {
-    return `This action updates a #${id} midWithdraw`;
+  async update(id: number, updateMidWithdrawDto: UpdateMidWithdrawDto, user) {
+    const { status, audit_info } = updateMidWithdrawDto;
+    const newData = {
+      status,
+      audit_info,
+      audit_user: user.username,
+      audit_time: Moment().format('YYYY-MM-DD HH:mm:ss'),
+    };
+    await this.midWithdrawRepository.update(id, newData);
+    return;
   }
 
   remove(id: number) {

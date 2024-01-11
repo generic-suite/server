@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseGuards, UsePipes } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Request, UseGuards, UsePipes } from '@nestjs/common';
 import { MidOrderService } from './mid-order.service';
 import { CreateMidOrderDto } from './dto/create-mid-order.dto';
 import { UpdateMidOrderDto } from './dto/update-mid-order.dto';
@@ -16,8 +16,8 @@ export class MidOrderController {
   @UseGuards(AuthGuard('jwt')) // 校验是否合法用户
   @Post('startOrder')
   async create(@Body() createMidOrderDto: CreateMidOrderDto, @Request() req: any) {
-    const userId = req.user.userId; // 获取用户id
-    return this.midOrderService.startOrder(userId);
+    const user = req.user; // 获取用户id
+    return this.midOrderService.startOrder(user);
   }
 
   @UsePipes(new ValidationPipe()) // 校验字段
@@ -30,6 +30,13 @@ export class MidOrderController {
     return this.midOrderService.submitOrder(orderId, userId);
   }
 
+  @UsePipes(new ValidationPipe()) // 校验字段
+  @UseGuards(new RbacGuard(role.ADMIN)) // 校验权限
+  @UseGuards(AuthGuard('jwt')) // 校验是否合法用户
+  @Get()
+  async findPage(@Query() query: any) {
+    return this.midOrderService.findPage(query);
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {

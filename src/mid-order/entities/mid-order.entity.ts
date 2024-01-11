@@ -21,12 +21,27 @@ export class MidOrder {
   })
   user_id: number;
 
+  @Column({
+    type: 'varchar',
+    length: 50,
+    comment: '用户名',
+  })
+  username: string;
+
   // 商品id
   @Column({
     type: 'int',
     comment: '商品id',
   })
   goods_id: number;
+
+  // 商品名称
+  @Column({
+    type: 'varchar',
+    length: 50,
+    comment: '商品名称',
+  })
+  goods_name: string;
 
   // 商品数量
   @Column({

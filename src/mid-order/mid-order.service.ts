@@ -23,7 +23,9 @@ export class MidOrderService {
     private readonly midUserService: MidUserService,
   ) {}
 
-  async startOrder(userId: number) {
+  async startOrder(user: { userId: number; username: string }) {
+    const userId = user.userId;
+    const username = user.username;
     // 获取当前用户的vip等级
     const vipLevel = await this.midVipService.getVipLevel(userId);
     const vipData = await this.vipListService.findOne(vipLevel.vip_id);
@@ -92,7 +94,9 @@ export class MidOrderService {
     const orderNo = 'SC' + Math.floor(Math.random() * 100000000); // 订单编号为 SC + 8位随机数
     const newOrder = {
       user_id: userId,
+      username: username,
       goods_id: randomGood.id,
+      goods_name: randomGood.good_name,
       goods_num: 1,
       order_amount: +randomGood.price * 1,
       order_commission: (vipData.return_rate / 100) * +randomGood.price * 1,
@@ -161,5 +165,29 @@ export class MidOrderService {
     }
 
     return;
+  }
+
+  async findPage(query: any) {
+    const { pageSize = 10, current = 1, ...otherParams } = query;
+    const [list, total] = await this.midOrderRepository.findAndCount({
+      where: {
+        ...otherParams,
+      },
+      take: pageSize,
+      skip: pageSize * (current - 1),
+    });
+    return {
+      code: 200,
+      data: {
+        list,
+        pagination: {
+          total,
+          pageSize,
+          current,
+        },
+      },
+      success: true,
+      msg: '操作成功',
+    };
   }
 }

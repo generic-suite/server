@@ -5,4 +5,8 @@ export class CreateVipListDto {
 
   @IsNotEmpty({ message: '会员图片不能为空' })
   readonly img: string;
+
+  @IsNotEmpty({ message: '会员等级不能为空' })
+  @IsNumber({}, { message: '会员等级必须为数字' })
+  readonly level: number;
 }

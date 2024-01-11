@@ -18,24 +18,40 @@ export class VipListService {
     return data;
   }
 
+  // 分页查询
+  async findPage(query: any) {
+    const { pageSize = 10, current = 1, ...otherParams } = query;
+    const [list, total] = await this.vipRepository.findAndCount({
+      where: {
+        ...otherParams,
+      },
+      take: pageSize,
+      skip: pageSize * (current - 1),
+    });
+    return {
+      code: 200,
+      data: {
+        list,
+        pagination: {
+          total,
+          pageSize,
+          current,
+        },
+      },
+      success: true,
+      msg: '操作成功',
+    };
+  }
+
   async findOne(id: number) {
     const data = await this.vipRepository.findOneById(id);
     return data;
   }
 
   async update(id: number, updateVipListDto: UpdateVipListDto) {
-    const data = await this.vipRepository.findOneById(id);
-    if (data) {
-      const newData = await this.vipRepository.save({ ...data, ...updateVipListDto });
-      return newData;
-    }
-
-    const res = {
-      code: 200,
-      msg: '数据不存在',
-      success: false,
-    };
-    return res;
+    // 更新数据
+    await this.vipRepository.update(id, updateVipListDto);
+    return;
   }
 
   async remove(id: number) {

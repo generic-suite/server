@@ -7,6 +7,13 @@ export class VipList {
   @Exclude()
   id: number;
 
+  @Column({
+    type: 'int',
+    comment: '等级',
+    default: 0,
+  })
+  level: number;
+
   // 名称
   @Column({
     type: 'varchar',
@@ -67,19 +74,23 @@ export class VipList {
 
   // 价格范围 0% - 100% 最低
   @Column({
-    type: 'int',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: '60.00',
     comment: '价格范围 0% - 100% 最低',
-    default: 0,
   })
-  price_min: number;
+  price_min: string;
 
   // 价格范围 0% - 100% 最高
   @Column({
-    type: 'int',
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: '100.00',
     comment: '价格范围 0% - 100% 最高',
-    default: 100,
   })
-  price_max: number;
+  price_max: string;
 
   // 返还佣金比例
   @Column({

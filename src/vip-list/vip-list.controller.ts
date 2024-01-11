@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, UsePipes } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, UsePipes } from '@nestjs/common';
 import { VipListService } from './vip-list.service';
 import { CreateVipListDto } from './dto/create-vip-list.dto';
 import { UpdateVipListDto } from './dto/update-vip-list.dto';
@@ -22,8 +22,8 @@ export class VipListController {
   @UseGuards(new RbacGuard(role.HUMAN))
   @UseGuards(AuthGuard('jwt'))
   @Get()
-  findAll() {
-    return this.vipListService.findAll();
+  findAll(@Query() query: any) {
+    return this.vipListService.findPage(query);
   }
 
   @Get(':id')

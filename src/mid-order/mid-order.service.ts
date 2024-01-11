@@ -69,8 +69,8 @@ export class MidOrderService {
     const vipPrice_min = vipData.price_min;
     const vipPrice_max = vipData.price_max;
     // 3. 计算出用户可以购买的价格区间
-    const userPrice_min = userBalance * (vipPrice_min / 100);
-    const userPrice_max = userBalance * (vipPrice_max / 100);
+    const userPrice_min = userBalance * (+vipPrice_min / 100);
+    const userPrice_max = userBalance * (+vipPrice_max / 100);
     // 4. 拿到所有的商品列表
     const goodsList = await this.goodsService.findAllGoods();
     // 5. 过滤出用户可以购买的商品列表

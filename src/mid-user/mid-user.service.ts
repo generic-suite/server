@@ -30,8 +30,9 @@ export class MidUserService {
   async init(user: MidUser) {
     // 获取会员列表
     const vipList = await this.vipListService.findAll();
-    // 获取会员列表中的第一个会员
-    const vipId = vipList[0].id;
+    console.log('🚀  file: mid-user.service.ts:33  MidUserService  init  vipList:', vipList);
+    // 获取会员列表中，等级最低的会员
+    const vipId = vipList.sort((a, b) => a.level - b.level)[0].id;
 
     // 根据邀请码查询上级用户 如果没有上级用户则为0
     const inviteCodeUser = await this.midUserRepository.findOneBy({

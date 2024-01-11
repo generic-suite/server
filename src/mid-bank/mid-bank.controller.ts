@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request, UseGuards, UsePipes } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, Request, UseGuards, UsePipes } from '@nestjs/common';
 import { MidBankService } from './mid-bank.service';
 import { SaveMidBankDto } from './dto/save-mid-bank.dto';
 
@@ -43,5 +43,14 @@ export class MidBankController {
   @Post('setCard/:userId')
   saveOtherUserCard(@Body() saveMidBankDto: SaveMidBankDto, @Param('userId') userId: number) {
     return this.midBankService.save(saveMidBankDto, userId);
+  }
+
+  // 获取银行卡信息列表
+  @UsePipes(new ValidationPipe()) // 校验字段
+  @UseGuards(new RbacGuard(role.ADMIN)) // 校验权限
+  @UseGuards(AuthGuard('jwt')) // 校验是否合法用户
+  @Get('getCardList')
+  findCardList(@Query() query: any) {
+    return this.midBankService.findCardList(query);
   }
 }

@@ -14,6 +14,15 @@ export class MidBank {
   })
   user_id: number;
 
+  // 用户名
+  @Column({
+    type: 'varchar',
+    length: 50,
+    comment: '用户名',
+    default: '',
+  })
+  username: string;
+
   // 银行名称
   @Column({
     type: 'varchar',

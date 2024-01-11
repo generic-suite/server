@@ -9,6 +9,9 @@ export class MidWalletFlow {
   @Column()
   userId: number;
 
+  @Column()
+  username: string;
+
   // 订单id
   @Column({
     type: 'int',

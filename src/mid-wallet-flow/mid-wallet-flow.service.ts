@@ -15,12 +15,33 @@ export class MidWalletFlowService {
   async create(createMidWalletFlowDto: CreateMidWalletFlowDto) {
     const data = {
       ...createMidWalletFlowDto,
-    }
+    };
     const res = await this.midWalletFlowRepository.save(data);
   }
 
-  findAll() {
-    return `This action returns all midWalletFlow`;
+  // 分页查询
+  async findPage(query: any) {
+    const { pageSize = 10, current = 1, ...otherParams } = query;
+    const [list, total] = await this.midWalletFlowRepository.findAndCount({
+      where: {
+        ...otherParams,
+      },
+      take: pageSize,
+      skip: pageSize * (current - 1),
+    });
+    return {
+      code: 200,
+      data: {
+        list,
+        pagination: {
+          total,
+          pageSize,
+          current,
+        },
+      },
+      success: true,
+      msg: '操作成功',
+    };
   }
 
   findOne(id: number) {

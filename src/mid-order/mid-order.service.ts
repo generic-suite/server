@@ -42,6 +42,15 @@ export class MidOrderService {
     // 获取用户信息
     const midUser = await this.midUserService.getUserInfo(userId);
 
+    // 校验用户的交易状态
+    if (midUser.is_allow_trade == 2) {
+      return {
+        code: 200,
+        msg: '您已被禁止交易',
+        success: false,
+      };
+    }
+
     // 获取当前用户的vip等级
     const vipData = await this.vipListService.findOne(midUser.level_id);
 
@@ -149,6 +158,16 @@ export class MidOrderService {
   }
 
   async submitOrder(orderId: number, userId: number) {
+    // 校验用户的交易状态
+    const midUser = await this.midUserService.getUserInfo(userId);
+    if (midUser.is_allow_trade == 2) {
+      return {
+        code: 200,
+        msg: '您已被禁止交易',
+        success: false,
+      };
+    }
+
     // 1. 校验订单是否存在
     const data = await this.midOrderRepository.findOneById(orderId);
     if (!data) {
@@ -183,8 +202,6 @@ export class MidOrderService {
       order_time: new Date(), // 订单完成时间
     };
 
-    // 4. 用户信息更新(更新用户今日完成订单数量/总订单数量/交易总金额/今日交易金额)
-    const midUser = await this.midUserService.getUserInfo(userId);
     // 定义流水数据
     const newFlow = {
       userId: userId,
@@ -195,7 +212,7 @@ export class MidOrderService {
       price: +newData.order_amount + '', // 交易金额
       beforePrice: +midUser.balance + '', // 交易前金额
     };
-    // 定义用户数据
+    // 4. 用户信息更新(更新用户今日完成订单数量/总订单数量/交易总金额/今日交易金额)
     const userData = {
       ...midUser,
       trade_order_count: midUser.trade_order_count + 1, // 总订单数量+1
@@ -228,7 +245,7 @@ export class MidOrderService {
           beforePrice: +userData.balance + '', // 交易前金额
         };
         await transactionalEntityManager.save(MidWalletFlow, newCommissionFlow); // 更新流水信息
-        // 更新用户钱包
+        // 定于用户余额数据
         const userData_commission = {
           ...midUser,
           balance: +userData.balance + +newData.order_commission + '', // 余额 = 余额 + 返佣金额

@@ -26,9 +26,11 @@ export class MidOrderService {
   async startOrder(user: { userId: number; username: string }) {
     const userId = user.userId;
     const username = user.username;
+    // 获取用户信息
+    const midUser = await this.midUserService.getUserInfo(userId);
+
     // 获取当前用户的vip等级
-    const vipLevel = await this.midVipService.getVipLevel(userId);
-    const vipData = await this.vipListService.findOne(vipLevel.vip_id);
+    const vipData = await this.vipListService.findOne(midUser.level_id);
 
     // 校验该用户是否有未完成的订单
     const unDoneOrder = await this.midOrderRepository.findOne({
@@ -44,7 +46,17 @@ export class MidOrderService {
         success: false,
       };
     }
-    // 校验当前用户已完成的订单数量
+
+    // 校验该用户的余额是否满足vip等级限定的接单金额
+    if (+midUser.balance < +vipData.order_amount_min) {
+      return {
+        code: 200,
+        msg: '当前余额不足以接单',
+        success: false,
+      };
+    }
+
+    // 校验该用户是否超出每日接单数量
     const doneOrderCount = await this.midOrderRepository.count({
       where: {
         user_id: userId,
@@ -52,7 +64,6 @@ export class MidOrderService {
         order_time: new Date(),
       },
     });
-    // 获取当前用户的vip等级对应的任务数量
     const vipTaskCount = vipData.order_count;
     if (doneOrderCount >= vipTaskCount) {
       return {
@@ -64,9 +75,7 @@ export class MidOrderService {
 
     // 创建订单
     // 1. 获取当前登录用户的余额
-    const midUser = await this.midUserService.getUserInfo(userId);
     const userBalance = +midUser.balance;
-
     // 2. 获取当前用户的vip等级的价格范围 [price_min, price_max] %
     const vipPrice_min = vipData.price_min;
     const vipPrice_max = vipData.price_max;
@@ -90,7 +99,7 @@ export class MidOrderService {
     // 6. 随机获取一件商品
     const randomIndex = Math.floor(Math.random() * canBuyGoodsList.length);
     const randomGood = canBuyGoodsList[randomIndex];
-    // 7. 创建订单
+    // 7. 预设订单数据
     const orderNo = 'SC' + Math.floor(Math.random() * 100000000); // 订单编号为 SC + 8位随机数
     const newOrder = {
       user_id: userId,
@@ -104,8 +113,26 @@ export class MidOrderService {
       commission_status: 1,
       order_no: orderNo,
     };
-    const order = await this.midOrderRepository.save(newOrder);
-    return newOrder;
+
+    // 8 和 9 需要事务处理
+    try {
+      await this.midOrderRepository.manager.transaction(async (transactionalEntityManager) => {
+        // 8. 从用户余额中扣除订单金额
+        await transactionalEntityManager.update(MidUser, midUser.id, {
+          balance: +midUser.balance - +newOrder.order_amount, // 更新用户余额
+          freeze_money: +newOrder.order_amount, // 冻结金额
+        });
+        // 9. 创建订单
+        await transactionalEntityManager.save(MidOrder, newOrder);
+        return newOrder;
+      });
+    } catch (error) {
+      return {
+        code: 200,
+        msg: '提交订单失败',
+        success: false,
+      };
+    }
   }
 
   async submitOrder(orderId: number, userId: number) {

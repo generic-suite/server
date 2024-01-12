@@ -84,6 +84,7 @@ export class MidUserService {
     }
     // 先在钱包流水表中添加一条记录
     const walletFlowData = {
+      username: midUser.username,
       userId: user_id,
       type: 1,
       status: isRecharge ? 1 : 2,

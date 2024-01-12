@@ -37,19 +37,4 @@ export class MidOrderController {
   async findPage(@Query() query: any) {
     return this.midOrderService.findPage(query);
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.midOrderService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateMidOrderDto: UpdateMidOrderDto) {
-  //   return this.midOrderService.update(+id, updateMidOrderDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.midOrderService.remove(+id);
-  // }
 }

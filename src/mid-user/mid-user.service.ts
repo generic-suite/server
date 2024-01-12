@@ -65,7 +65,7 @@ export class MidUserService {
   @OnEvent('clear_order_count', { async: true })
   async clearOrderCount() {
     // 给数据库中的每个用户的当日订单数和当日订单金额清零
-    const data = await this.midUserRepository.update({}, { today_trade_order_count: 0, today_trade_money: 0 });
+    const data = await this.midUserRepository.update({}, { today_trade_order_count: 0, today_trade_money: '0' });
   }
 
   // 加扣款
@@ -76,11 +76,11 @@ export class MidUserService {
     // 记录一下充值前的金额
     const beforePrice = midUser.balance;
     if (isRecharge) {
-      midUser.balance = +midUser.balance + amount;
-      midUser.recharge_money = +midUser.recharge_money + amount; // 累计充值
+      midUser.balance = +midUser.balance + amount + '';
+      midUser.recharge_money = +midUser.recharge_money + amount + ''; // 累计充值
     } else {
-      midUser.balance = +midUser.balance - amount;
-      midUser.withdraw_money = +midUser.withdraw_money + amount; // 累计提现
+      midUser.balance = +midUser.balance - amount + '';
+      midUser.withdraw_money = +midUser.withdraw_money + amount + ''; // 累计提现
     }
     // 先在钱包流水表中添加一条记录
     const walletFlowData = {
@@ -88,8 +88,8 @@ export class MidUserService {
       userId: user_id,
       type: 1,
       status: isRecharge ? 1 : 2,
-      price: amount,
-      beforePrice: beforePrice,
+      price: amount + '',
+      beforePrice: beforePrice + '',
       remark: isRecharge ? '充值' : '提现',
     };
     await this.midWalletFlowService.create(walletFlowData);
@@ -104,7 +104,7 @@ export class MidUserService {
       userId: user_id,
     });
     midUser.today_trade_order_count = 0;
-    midUser.today_trade_money = 0;
+    midUser.today_trade_money = '0';
     await this.midUserRepository.save(midUser);
     return;
   }
@@ -124,8 +124,8 @@ export class MidUserService {
     });
     midUser.trade_order_count = updateMidUserDto.trade_order_count;
     midUser.today_trade_order_count = updateMidUserDto.today_trade_order_count;
-    midUser.trade_money = updateMidUserDto.trade_money;
-    midUser.today_trade_money = updateMidUserDto.today_trade_money;
+    midUser.trade_money = updateMidUserDto.trade_money + '';
+    midUser.today_trade_money = updateMidUserDto.today_trade_money + '';
     const data = await this.midUserRepository.save(midUser);
     return data;
   }

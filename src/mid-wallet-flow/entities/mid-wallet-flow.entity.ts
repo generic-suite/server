@@ -41,7 +41,7 @@ export class MidWalletFlow {
     scale: 2,
     comment: '交易金额',
   })
-  price: number;
+  price: string;
 
   // 交易前余额
   @Column({
@@ -50,7 +50,7 @@ export class MidWalletFlow {
     scale: 2,
     comment: '交易前余额',
   })
-  beforePrice: number;
+  beforePrice: string;
 
   // 交易说明
   @Column({

@@ -80,20 +80,20 @@ export class MidUser {
     type: 'decimal',
     precision: 10,
     scale: 2,
-    default: 0,
+    default: '0',
     comment: '余额',
   })
-  balance: number;
+  balance: string;
 
   // 冻结金额
   @Column({
     type: 'decimal',
     precision: 10,
     scale: 2,
-    default: 0,
+    default: '0',
     comment: '冻结金额',
   })
-  freeze_money: number;
+  freeze_money: string;
 
   // 是否允许正常交易
   @Column({
@@ -130,27 +130,27 @@ export class MidUser {
   // 交易总金额
   @Column({
     type: 'decimal',
-    default: 0,
+    default: '0',
     precision: 10,
     scale: 2,
     comment: '交易总金额',
   })
-  trade_money: number;
+  trade_money: string;
 
   // 今日交易金额
   @Column({
     type: 'decimal',
-    default: 0,
+    default: '0',
     precision: 10,
     scale: 2,
     comment: '今日交易金额',
   })
-  today_trade_money: number;
+  today_trade_money: string;
 
   // 总佣金
   @Column({
     type: 'decimal',
-    default: 0,
+    default: '0',
     precision: 10,
     scale: 2,
     comment: '总佣金',
@@ -160,7 +160,7 @@ export class MidUser {
   // 今日佣金
   @Column({
     type: 'decimal',
-    default: 0,
+    default: '0',
     precision: 10,
     scale: 2,
     comment: '今日佣金',
@@ -170,22 +170,22 @@ export class MidUser {
   // 累计充值
   @Column({
     type: 'decimal',
-    default: 0,
+    default: '0',
     precision: 10,
     scale: 2,
     comment: '累计充值',
   })
-  recharge_money: number;
+  recharge_money: string;
 
   // 累计提现
   @Column({
     type: 'decimal',
-    default: 0,
+    default: '0',
     precision: 10,
     scale: 2,
     comment: '累计提现',
   })
-  withdraw_money: number;
+  withdraw_money: string;
 
   // 是否为代理用户
   @Column({

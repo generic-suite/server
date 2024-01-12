@@ -4,10 +4,10 @@ export class CreateMidWalletFlowDto {
   userId: number;
   @IsNotEmpty({ message: '交易类型不能为空' })
   type: number;
-  @IsNotEmpty({ message: '交易状态不能为空'})
+  @IsNotEmpty({ message: '交易状态不能为空' })
   status: number;
-  @IsNotEmpty({ message: '交易金额不能为空'})
-  price: number;
+  @IsNotEmpty({ message: '交易金额不能为空' })
+  price: string;
   @IsNotEmpty()
-  beforePrice: number;
+  beforePrice: string;
 }

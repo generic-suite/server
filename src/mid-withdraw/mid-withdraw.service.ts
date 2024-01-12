@@ -38,7 +38,7 @@ export class MidWithdrawService {
     const { balance } = user;
     const { amount } = createMidWithdrawDto;
     // 是否满足提现条件-余额
-    if (balance < amount) {
+    if (+balance < amount) {
       return {
         code: 400,
         success: false,

@@ -37,4 +37,14 @@ export class MidOrderController {
   async findPage(@Query() query: any) {
     return this.midOrderService.findPage(query);
   }
+
+  // 根据userId获取订单列表
+  @UsePipes(new ValidationPipe()) // 校验字段
+  @UseGuards(new RbacGuard(role.HUMAN)) // 校验权限
+  @UseGuards(AuthGuard('jwt')) // 校验是否合法用户
+  @Get('getOrderList')
+  async getOrderList(@Request() req: any) {
+    const userId = req.user.userId;
+    return this.midOrderService.getOrderList(userId);
+  }
 }

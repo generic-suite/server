@@ -5,8 +5,8 @@ import { UpdateMidOrderDto } from './dto/update-mid-order.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { MidOrder } from './entities/mid-order.entity';
-
 import { MidUser } from 'src/mid-user/entities/mid-user.entity';
+import { MidWalletFlow } from 'src/mid-wallet-flow/entities/mid-wallet-flow.entity';
 
 // 引入会员服务
 import { MidVipService } from '../mid-vip/mid-vip.service';
@@ -23,6 +23,19 @@ export class MidOrderService {
     private readonly midUserService: MidUserService,
   ) {}
 
+  async getOrderList(userId) {
+    const list = await this.midOrderRepository.find({
+      where: {
+        user_id: userId,
+      },
+    });
+    return {
+      code: 200,
+      data: list,
+      success: true,
+      msg: '操作成功',
+    };
+  }
   async startOrder(user: { userId: number; username: string }) {
     const userId = user.userId;
     const username = user.username;
@@ -107,8 +120,8 @@ export class MidOrderService {
       goods_id: randomGood.id,
       goods_name: randomGood.good_name,
       goods_num: 1,
-      order_amount: +randomGood.price * 1,
-      order_commission: (vipData.return_rate / 100) * +randomGood.price * 1,
+      order_amount: +randomGood.price * 1 + '',
+      order_commission: (vipData.return_rate / 100) * +randomGood.price * 1 + '',
       order_status: 1,
       commission_status: 1,
       order_no: orderNo,
@@ -119,13 +132,13 @@ export class MidOrderService {
       await this.midOrderRepository.manager.transaction(async (transactionalEntityManager) => {
         // 8. 从用户余额中扣除订单金额
         await transactionalEntityManager.update(MidUser, midUser.id, {
-          balance: +midUser.balance - +newOrder.order_amount, // 更新用户余额
-          freeze_money: +newOrder.order_amount, // 冻结金额
+          balance: +midUser.balance - +newOrder.order_amount + '', // 更新用户余额
+          freeze_money: +newOrder.order_amount + '', // 冻结金额
         });
         // 9. 创建订单
         await transactionalEntityManager.save(MidOrder, newOrder);
-        return newOrder;
       });
+      return newOrder;
     } catch (error) {
       return {
         code: 200,
@@ -172,16 +185,59 @@ export class MidOrderService {
 
     // 4. 用户信息更新(更新用户今日完成订单数量/总订单数量/交易总金额/今日交易金额)
     const midUser = await this.midUserService.getUserInfo(userId);
-    midUser.trade_order_count++; // 总订单数量+1
-    midUser.today_trade_order_count++; // 今日订单数量+1
-    midUser.trade_money = +midUser.trade_money + +newData.order_amount; // 交易总金额+订单金额
-    midUser.today_trade_money = +midUser.today_trade_money + +newData.order_amount; // 今日交易金额+订单金额
+    // 定义流水数据
+    const newFlow = {
+      userId: userId,
+      username: midUser.username,
+      orderId: orderId,
+      type: 3, // 交易
+      status: 1, // 收入
+      price: +newData.order_amount + '', // 交易金额
+      beforePrice: +midUser.balance + '', // 交易前金额
+    };
+    // 定义用户数据
+    const userData = {
+      ...midUser,
+      trade_order_count: midUser.trade_order_count + 1, // 总订单数量+1
+      today_trade_order_count: midUser.today_trade_order_count + 1, // 今日订单数量+1
+      trade_money: +midUser.trade_money + +newData.order_amount + '', // 交易总金额+
+      today_trade_money: +midUser.today_trade_money + +newData.order_amount + '', // 今日交易金额+
+      freeze_money: +midUser.freeze_money - +newData.order_amount + '', // 冻结金额返还
+      balance: +midUser.balance + +newData.order_amount + '', // 余额返还
+    };
 
+    // 1. 返还冻结金额, 余额 = 余额 + 冻结金额.先在钱包流水表中添加一条记录
+    // 2. 在用户钱包中更新余额
+    // 3. 更新订单状态
+    // 4. 佣金结算,现在钱包流水中添加一条记录
+    // 5. 在用户钱包中更新余额 (余额 = 余额 + 佣金)
     try {
       await this.midOrderRepository.manager.transaction(async (transactionalEntityManager) => {
-        await transactionalEntityManager.save(MidUser, midUser); // 更新用户信息
+        await transactionalEntityManager.save(MidWalletFlow, newFlow); // 更新流水信息
+        await transactionalEntityManager.save(MidUser, userData); // 更新用户信息
         await transactionalEntityManager.save(MidOrder, newData); // 更新订单信息
-        return;
+
+        // 定义返佣流水数据
+        const newCommissionFlow = {
+          userId: userId,
+          username: midUser.username,
+          orderId: orderId,
+          type: 4, // 返佣
+          status: 1, // 收入
+          price: +newData.order_commission + '', // 交易金额
+          beforePrice: +userData.balance + '', // 交易前金额
+        };
+        await transactionalEntityManager.save(MidWalletFlow, newCommissionFlow); // 更新流水信息
+        // 更新用户钱包
+        const userData_commission = {
+          ...midUser,
+          balance: +userData.balance + +newData.order_commission + '', // 余额 = 余额 + 返佣金额
+          trade_money: +userData.trade_money + +newData.order_commission + '', // 交易总金额 = 交易总金额 + 返佣金额
+          today_trade_money: +userData.today_trade_money + +newData.order_commission + '', // 今日交易金额 = 今日交易金额 + 返佣金额
+          commission_total: +midUser.commission_total + +newData.order_commission + '', // 返佣总金额 = 返佣总金额 + 返佣金额
+          commission_today: +midUser.commission_today + +newData.order_commission + '', // 今日返佣金额 = 今日返佣金额 + 返佣金额
+        };
+        await transactionalEntityManager.save(MidUser, userData_commission); // 更新用户信息
       });
     } catch (error) {
       return {
@@ -190,7 +246,6 @@ export class MidOrderService {
         success: false,
       };
     }
-
     return;
   }
 

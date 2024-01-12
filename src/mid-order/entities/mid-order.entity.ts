@@ -57,7 +57,7 @@ export class MidOrder {
     scale: 2,
     comment: '订单金额',
   })
-  order_amount: number;
+  order_amount: string;
 
   // 订单佣金
   @Column({
@@ -66,7 +66,7 @@ export class MidOrder {
     scale: 2,
     comment: '订单佣金',
   })
-  order_commission: number;
+  order_commission: string;
 
   // 订单状态  1-未付款  2-交易完成
   @Column({

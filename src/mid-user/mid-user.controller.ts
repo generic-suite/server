@@ -53,4 +53,14 @@ export class MidUserController {
   async findAll(@Query() query: any) {
     return await this.midUserService.findAll(query);
   }
+
+  // 设置用户的vip等级
+  @UseGuards(new RbacGuard(role.ADMIN))
+  @UseGuards(AuthGuard('jwt'))
+  @Post('set-vip')
+  async setVip(@Body() body: { userId: number; level_id: number }) {
+    const { userId, level_id } = body;
+    await this.midUserService.setVip(userId, level_id);
+    return;
+  }
 }

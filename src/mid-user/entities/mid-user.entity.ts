@@ -119,6 +119,14 @@ export class MidUser {
   })
   today_trade_order_count: number;
 
+  // 每日可做任务量-根据vip等级而定
+  @Column({
+    type: 'int',
+    default: 0,
+    comment: '每日可做任务量-根据vip等级而定',
+  })
+  order_count: number;
+
   // 交易总金额
   @Column({
     type: 'decimal',
@@ -138,6 +146,26 @@ export class MidUser {
     comment: '今日交易金额',
   })
   today_trade_money: number;
+
+  // 总佣金
+  @Column({
+    type: 'decimal',
+    default: 0,
+    precision: 10,
+    scale: 2,
+    comment: '总佣金',
+  })
+  commission_total: string;
+
+  // 今日佣金
+  @Column({
+    type: 'decimal',
+    default: 0,
+    precision: 10,
+    scale: 2,
+    comment: '今日佣金',
+  })
+  commission_today: string;
 
   // 累计充值
   @Column({

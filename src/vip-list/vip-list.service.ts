@@ -20,6 +20,14 @@ export class VipListService {
 
   // 分页查询
   async findPage(query: any) {
+    if (Object.keys(query).length === 0) {
+      const data = await this.vipRepository.find({
+        order: {
+          level: 'ASC',
+        },
+      });
+      return data;
+    }
     const { pageSize = 10, current = 1, ...otherParams } = query;
     const [list, total] = await this.vipRepository.findAndCount({
       where: {
@@ -27,6 +35,9 @@ export class VipListService {
       },
       take: pageSize,
       skip: pageSize * (current - 1),
+      order: {
+        level: 'ASC',
+      },
     });
     return {
       code: 200,

@@ -30,9 +30,8 @@ export class MidUserService {
   async init(user: MidUser) {
     // 获取会员列表
     const vipList = await this.vipListService.findAll();
-    console.log('🚀  file: mid-user.service.ts:33  MidUserService  init  vipList:', vipList);
     // 获取会员列表中，等级最低的会员
-    const vipId = vipList.sort((a, b) => a.level - b.level)[0].id;
+    const vipItem = vipList.sort((a, b) => a.level - b.level)[0];
 
     // 根据邀请码查询上级用户 如果没有上级用户则为0
     const inviteCodeUser = await this.midUserRepository.findOneBy({
@@ -44,9 +43,10 @@ export class MidUserService {
     // 初始化中间表
     const midUser = {
       ...user,
-      level_id: vipId,
+      level_id: vipItem.id,
       parent_id: parent_id,
       invite_code: invite_code,
+      order_count: vipItem.order_count,
     };
     const data = await this.midUserRepository.save(midUser);
   }
@@ -162,5 +162,19 @@ export class MidUserService {
   async getVipInfo(level_id: number) {
     const vipInfo = await this.vipListService.findOneByLevel(level_id);
     return vipInfo;
+  }
+
+  // 设置用户的vip等级
+  async setVip(user_id: number, level_id: number) {
+    const midUser = await this.midUserRepository.findOneBy({
+      userId: user_id,
+    });
+    const vipInfo = await this.getVipInfo(level_id);
+    // 设置用户的vip等级
+    midUser.level_id = level_id;
+    // 设置用户的每日可做任务量
+    midUser.order_count = vipInfo.order_count;
+    await this.midUserRepository.save(midUser);
+    return;
   }
 }

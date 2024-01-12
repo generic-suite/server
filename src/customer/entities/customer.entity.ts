@@ -23,4 +23,18 @@ export class Customer {
     default: '',
   })
   value: string;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    comment: '创建时间',
+    name: 'create_time',
+  })
+  create_time: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    comment: '更新时间',
+    name: 'update_time',
+  })
+  update_time: Date;
 }

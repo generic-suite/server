@@ -25,13 +25,13 @@ export class AppService {
   uploadFile(file: Express.Multer.File) {
     console.log(file);
     // 返回当前服务器的地址
-    const baseUrl = process.env.SYSTEM_SERVER_URL;
+    // const baseUrl = process.env.SYSTEM_SERVER_URL;
     return {
       code: 200,
       success: true,
       message: '上传成功',
       data: {
-        url: `${baseUrl}/uploads/${file.filename}`,
+        url: `/uploads/${file.filename}`,
         size: file.size,
         originalname: file.originalname,
         suffix: file.mimetype.split('/')[1],

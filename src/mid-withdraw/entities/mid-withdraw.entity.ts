@@ -77,6 +77,14 @@ export class MidWithdraw {
   })
   amount: string;
 
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    comment: '提现前金额',
+  })
+  price_pre: string;
+
   // 手续费
   @Column({
     type: 'decimal',

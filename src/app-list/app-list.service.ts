@@ -27,6 +27,11 @@ export class AppListService {
   }
 
   async findAll(query) {
+      // 查询所有-不分页
+    if (Object.keys(query).length === 0) {
+      const list = await this.appListRepository.find();
+      return list;
+    }
     const { pageSize = 10, current = 1, ...otherParams } = query;
     const where = {};
     if (otherParams.name) {

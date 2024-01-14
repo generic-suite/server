@@ -77,13 +77,46 @@ export class MidWithdrawService {
     const newData = {
       user_id: userInfo.userId,
       username: userInfo.username,
-      ...walletInfo, // 银行卡信息
       amount: createMidWithdrawDto.amount + '', // 提现金额
       fee: +vipInfo.withdraw_fee * +createMidWithdrawDto.amount + '', // 手续费
       status: 0, // 提现状态 0:待审核 1:审核通过 2:审核不通过
+      price_pre: +balance + '', // 提现前金额
+      bank_name: walletInfo.bank_name, // 银行名称
+      bank_card: walletInfo.bank_card, // 银行卡号
+      bank_account: walletInfo.bank_account, // 开户人
+      branch_name: walletInfo.branch_name, // 支行名称
+      branch_number: walletInfo.branch_number, // 支行联行号
     };
-    const result = await this.midWithdrawRepository.save(newData);
+    // 创建一条新的提现记录
+    const data = await this.midWithdrawRepository.save(newData);
     return;
+  }
+
+  // 查询用户所有提现记录
+  async findUserAll(query: any, user: { username: string; userId: number }) {
+    const { pageSize = 10, current = 1, ...otherParams } = query;
+    const where = {
+      user_id: user.userId,
+      ...otherParams,
+    };
+    const [list, total] = await this.midWithdrawRepository.findAndCount({
+      where,
+      skip: pageSize * (current - 1),
+      take: pageSize,
+    });
+    return {
+      code: 200,
+      data: {
+        list,
+        pagination: {
+          total,
+          pageSize,
+          current,
+        },
+      },
+      success: true,
+      msg: '查询成功',
+    };
   }
 
   async findAll(query: any) {

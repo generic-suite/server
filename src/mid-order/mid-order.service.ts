@@ -25,6 +25,10 @@ export class MidOrderService {
 
   async getOrderList(userId) {
     const list = await this.midOrderRepository.find({
+      // 按照时间倒序
+      order: {
+        create_time: 'DESC',
+      },
       where: {
         user_id: userId,
       },
@@ -129,6 +133,7 @@ export class MidOrderService {
       goods_id: randomGood.id,
       goods_name: randomGood.good_name,
       goods_num: 1,
+      goods_img: randomGood.good_img,
       order_amount: +randomGood.price * 1 + '',
       order_commission: (vipData.return_rate / 100) * +randomGood.price * 1 + '',
       order_status: 1,

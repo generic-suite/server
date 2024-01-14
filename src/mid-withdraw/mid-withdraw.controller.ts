@@ -12,6 +12,7 @@ import { roleConstans as role } from 'src/auth/constants';
 export class MidWithdrawController {
   constructor(private readonly midWithdrawService: MidWithdrawService) {}
 
+  // 申请提现
   @UsePipes(new ValidationPipe()) // 校验字段
   @UseGuards(new RbacGuard(role.HUMAN)) // 校验权限
   @UseGuards(AuthGuard('jwt')) // 校验是否合法用户
@@ -20,6 +21,16 @@ export class MidWithdrawController {
     return this.midWithdrawService.create(createMidWithdrawDto, req.user);
   }
 
+  // 提现列表-用户
+  @UsePipes(new ValidationPipe()) // 校验字段
+  @UseGuards(new RbacGuard(role.HUMAN)) // 校验权限
+  @UseGuards(AuthGuard('jwt')) // 校验是否合法用户
+  @Get('getMyList')
+  findUserAll(@Query() query: any, @Request() req: any) {
+    return this.midWithdrawService.findUserAll(query, req.user);
+  }
+
+  // 提现列表-admin
   @UsePipes(new ValidationPipe()) // 校验字段
   @UseGuards(new RbacGuard(role.ADMIN)) // 校验权限
   @UseGuards(AuthGuard('jwt')) // 校验是否合法用户
@@ -28,17 +39,18 @@ export class MidWithdrawController {
     return this.midWithdrawService.findAll(query);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.midWithdrawService.findOne(+id);
-  }
-
+  // 提现审核-admin
   @UsePipes(new ValidationPipe()) // 校验字段
   @UseGuards(new RbacGuard(role.ADMIN)) // 校验权限
   @UseGuards(AuthGuard('jwt')) // 校验是否合法用户
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateMidWithdrawDto: UpdateMidWithdrawDto, @Request() req: any) {
     return this.midWithdrawService.update(+id, updateMidWithdrawDto, req.user);
+  }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.midWithdrawService.findOne(+id);
   }
 
   @Delete(':id')

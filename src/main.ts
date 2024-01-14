@@ -7,7 +7,12 @@ import { HttpExceptionFilter } from './filter/http-exception/http-exception.filt
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
+  // 允许跨域访问
+  app.enableCors({
+    origin: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
   app.use(express.json()); // For parsing application/json
   app.use(express.urlencoded({ extended: true })); // For parsing application/x-www-form-urlencoded
   app.use(logger); // 日志中间件

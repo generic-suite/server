@@ -114,7 +114,13 @@ export class MidUserService {
     const midUser = await this.midUserRepository.findOneBy({
       userId: user_id,
     });
-    return midUser;
+    // 用户的vip信息
+    const vipData = await this.vipListService.findOneByLevel(midUser.level_id);
+    const userData = {
+      ...midUser,
+      vip: vipData,
+    };
+    return userData;
   }
 
   // 更新用户信息 --- 用于submitOrder 时, 更新用户的订单数量和交易金额

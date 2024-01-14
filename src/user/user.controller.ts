@@ -40,15 +40,12 @@ export class UserController {
     switch (authResult.code) {
       case 1:
         return this.authService.certificate(authResult.user);
-      case 2:
-        return {
-          code: 600,
-          msg: `账号或密码不正确`,
-        };
+
       default:
         return {
           code: 600,
-          msg: `查无此人`,
+          success: false,
+          msg: `账号或密码不正确`,
         };
     }
   }

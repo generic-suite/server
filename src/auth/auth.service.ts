@@ -55,21 +55,20 @@ export class AuthService {
       const token = this.jwtService.sign(payload);
       // 实例化redis
       const redis = await RedisInstance.initRedis('auth.certificate', 0);
-
       const key = `${user.userId}-${user.username}`;
-      console.log('🚀  60', key);
       await redis.set(key, token);
-
       return {
         code: 200,
         data: {
           token,
         },
+        success: true,
         msg: `登录成功`,
       };
     } catch (error) {
       return {
         code: 600,
+        success: false,
         msg: `账号或密码错误`,
       };
     }

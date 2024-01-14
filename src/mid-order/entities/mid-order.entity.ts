@@ -50,6 +50,14 @@ export class MidOrder {
   })
   goods_num: number;
 
+  // 商品图片
+  @Column({
+    type: 'varchar',
+    length: 255,
+    comment: '商品图片',
+  })
+  goods_img: string;
+
   // 订单金额
   @Column({
     type: 'decimal',

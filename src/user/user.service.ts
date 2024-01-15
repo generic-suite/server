@@ -126,19 +126,6 @@ export class UserService {
     }
     const newUser = await this.updatePassword(userId, changeBody.password);
     return newUser;
-    // const password = changeBody.password;
-    // // 制作密码盐
-    // const passwordSalt = makeSalt();
-    // // 制作密码
-    // const hashPwd = encryptPassword(password, passwordSalt);
-    // // 创建用户
-    // const newUser = {
-    //   password: hashPwd,
-    //   passwordSalt,
-    // };
-    // // 保存用户
-    // const createUser = await this.userRepository.update(userId, newUser);
-    // return createUser;
   }
 
   // 修改用户提现密码

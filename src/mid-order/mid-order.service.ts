@@ -73,8 +73,8 @@ export class MidOrderService {
       };
     }
 
-    // 校验该用户的余额是否满足vip等级限定的接单金额
-    if (+midUser.balance < +vipData.order_amount_min) {
+    // 校验该用户的余额是否满足vip等级限定的接单金额 // 余额 + 体验金 < vip等级限定的接单金额
+    if (+midUser.balance + +midUser.experience_money < +vipData.order_amount_min) {
       return {
         code: 200,
         msg: '当前余额不足以接单',
@@ -101,7 +101,7 @@ export class MidOrderService {
 
     // 创建订单
     // 1. 获取当前登录用户的余额
-    const userBalance = +midUser.balance;
+    const userBalance = +midUser.balance + +midUser.experience_money;
     // 2. 获取当前用户的vip等级的价格范围 [price_min, price_max] %
     const vipPrice_min = vipData.price_min;
     const vipPrice_max = vipData.price_max;
@@ -145,9 +145,36 @@ export class MidOrderService {
     try {
       await this.midOrderRepository.manager.transaction(async (transactionalEntityManager) => {
         // 8. 从用户余额中扣除订单金额
+
+        // 优先扣除体验金
+        let experience_money = +midUser.experience_money; // 体验金
+        let freeze_experience_money = +midUser.freeze_experience_money; // 冻结体验金
+        let balance = +midUser.balance; // 余额
+        let freeze_money = +midUser.freeze_money; // 冻结金额
+        // 如果有体验金
+        if (experience_money > 0) {
+          if (experience_money >= +newOrder.order_amount) {
+            // 且体验金大于当前订单的金额,则全部从体验金中扣除
+            experience_money = experience_money - +newOrder.order_amount;
+            freeze_experience_money = freeze_experience_money + +newOrder.order_amount;
+          } else {
+            // 体验金小于当前订单的金额,则从体验金中扣除,剩余的从余额中扣除
+            freeze_experience_money = freeze_experience_money + +experience_money;
+            experience_money = 0;
+            balance = balance - (+newOrder.order_amount - +experience_money); // 余额 = 余额 - (订单金额 - 体验金)
+            freeze_money = freeze_money + (+newOrder.order_amount - +experience_money); // 冻结金额 = 冻结金额 + (订单金额 - 体验金)
+          }
+        } else {
+          // 如果没有体验金,则从余额中扣除
+          balance = balance - +newOrder.order_amount;
+          freeze_money = freeze_money + +newOrder.order_amount;
+        }
+
         await transactionalEntityManager.update(MidUser, midUser.id, {
-          balance: +midUser.balance - +newOrder.order_amount + '', // 更新用户余额
-          freeze_money: +newOrder.order_amount + '', // 冻结金额
+          balance: balance + '', // 更新用户余额
+          freeze_money: balance + '', // 冻结金额
+          experience_money: experience_money + '', // 体验金
+          freeze_experience_money: freeze_experience_money + '', // 冻结体验金
         });
         // 9. 创建订单
         await transactionalEntityManager.save(MidOrder, newOrder);
@@ -224,9 +251,28 @@ export class MidOrderService {
       today_trade_order_count: midUser.today_trade_order_count + 1, // 今日订单数量+1
       trade_money: +midUser.trade_money + +newData.order_amount + '', // 交易总金额+
       today_trade_money: +midUser.today_trade_money + +newData.order_amount + '', // 今日交易金额+
-      freeze_money: +midUser.freeze_money - +newData.order_amount + '', // 冻结金额返还
-      balance: +midUser.balance + +newData.order_amount + '', // 余额返还
+      // freeze_money: +midUser.freeze_money - +newData.order_amount + '', // 冻结金额返还
+      // balance: +midUser.balance + +newData.order_amount + '', // 余额返还
     };
+
+    // 如果此时用户有冻结的体验金，则优先返还体验金
+    if (+midUser.freeze_experience_money > 0) {
+      if (+midUser.freeze_experience_money >= +newData.order_amount) {
+        // 如果冻结的体验金大于当前订单的金额,则全部从冻结的体验金中扣除
+        userData.freeze_experience_money = +midUser.freeze_experience_money - +newData.order_amount + ''; // 冻结的体验金 = 冻结的体验金 - 订单金额
+        userData.experience_money = +midUser.experience_money + +newData.order_amount + ''; // 体验金 = 体验金 + 订单金额
+      } else {
+        // 如果冻结的体验金小于当前订单的金额,则从冻结的体验金中扣除,剩余的从冻结的余额中扣除
+        userData.freeze_experience_money = 0 + ''; // 冻结的体验金 = 0
+        userData.experience_money = +midUser.experience_money + +midUser.freeze_experience_money + ''; // 体验金 = 体验金 + 冻结的体验金
+        userData.freeze_money = +midUser.freeze_money - (+newData.order_amount - +midUser.freeze_experience_money) + ''; // 冻结的余额 = 冻结的余额 - (订单金额 - 冻结的体验金)
+        userData.balance = +midUser.balance + (+newData.order_amount - +midUser.freeze_experience_money) + ''; // 余额 = 余额 + (订单金额 - 冻结的体验金)
+      }
+    } else {
+      // 如果没有冻结的体验金,则从冻结的余额中扣除
+      userData.freeze_money = +midUser.freeze_money - +newData.order_amount + ''; // 冻结的余额 = 冻结的余额 - 订单金额
+      userData.balance = +midUser.balance + +newData.order_amount + ''; // 余额 = 余额 + 订单金额
+    }
 
     // 1. 返还冻结金额, 余额 = 余额 + 冻结金额.先在钱包流水表中添加一条记录
     // 2. 在用户钱包中更新余额

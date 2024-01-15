@@ -105,6 +105,16 @@ export class MidUser {
   })
   experience_money: string;
 
+  // 冻结的体验金
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: '0',
+    comment: '冻结的体验金',
+  })
+  freeze_experience_money: string;
+
   // 是否允许正常交易
   @Column({
     type: 'tinyint',

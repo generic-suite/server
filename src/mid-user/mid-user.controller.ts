@@ -63,4 +63,14 @@ export class MidUserController {
     await this.midUserService.setVip(userId, level_id);
     return;
   }
+
+  // 体验金
+  @UseGuards(new RbacGuard(role.ADMIN))
+  @UseGuards(AuthGuard('jwt'))
+  @Post('experience-gold')
+  async experienceGold(@Body() body: { userId: number; experience_money: number }) {
+    const { userId, experience_money } = body;
+    await this.midUserService.experienceGold(userId, experience_money);
+    return;
+  }
 }

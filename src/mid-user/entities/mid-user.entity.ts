@@ -95,6 +95,16 @@ export class MidUser {
   })
   freeze_money: string;
 
+  // 体验金
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: '0',
+    comment: '体验金',
+  })
+  experience_money: string;
+
   // 是否允许正常交易
   @Column({
     type: 'tinyint',

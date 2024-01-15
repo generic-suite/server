@@ -184,4 +184,12 @@ export class MidUserService {
     await this.midUserRepository.save(midUser);
     return;
   }
+
+  // 设置用户的体验金
+  async experienceGold(user_id: number, amount: number) {
+    const midUser = await this.getUserInfo(user_id);
+    midUser.experience_money = amount + '';
+    await this.midUserRepository.save(midUser);
+    return;
+  }
 }

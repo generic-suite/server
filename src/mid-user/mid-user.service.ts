@@ -10,6 +10,7 @@ import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 
 import { VipListService } from 'src/vip-list/vip-list.service';
 import { MidWalletFlowService } from '../mid-wallet-flow/mid-wallet-flow.service';
+import { ReturnUser } from './dto/index.dto';
 @Injectable()
 export class MidUserService {
   constructor(
@@ -110,7 +111,7 @@ export class MidUserService {
   }
 
   // 获取用户信息
-  async getUserInfo(user_id: number): Promise<MidUser> {
+  async getUserInfo(user_id: number): Promise<ReturnUser> {
     const midUser = await this.midUserRepository.findOneBy({
       userId: user_id,
     });

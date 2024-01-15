@@ -60,7 +60,7 @@ export class VipListService {
   }
 
   // 根据vip等级查询
-  async findOneByLevel(level: number) {
+  async findOneByLevel(level: number): Promise<VipList> {
     const data = await this.vipRepository.findOneBy({
       level,
     });

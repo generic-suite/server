@@ -247,12 +247,10 @@ export class MidOrderService {
     // 4. 用户信息更新(更新用户今日完成订单数量/总订单数量/交易总金额/今日交易金额)
     const userData = {
       ...midUser,
-      trade_order_count: midUser.trade_order_count + 1, // 总订单数量+1
-      today_trade_order_count: midUser.today_trade_order_count + 1, // 今日订单数量+1
+      trade_order_count: midUser.trade_order_count++, // 总订单数量+1
+      today_trade_order_count: midUser.today_trade_order_count++, // 今日订单数量+1
       trade_money: +midUser.trade_money + +newData.order_amount + '', // 交易总金额+
       today_trade_money: +midUser.today_trade_money + +newData.order_amount + '', // 今日交易金额+
-      // freeze_money: +midUser.freeze_money - +newData.order_amount + '', // 冻结金额返还
-      // balance: +midUser.balance + +newData.order_amount + '', // 余额返还
     };
 
     // 如果此时用户有冻结的体验金，则优先返还体验金
@@ -284,7 +282,6 @@ export class MidOrderService {
         await transactionalEntityManager.save(MidWalletFlow, newFlow); // 更新流水信息
         await transactionalEntityManager.save(MidUser, userData); // 更新用户信息
         await transactionalEntityManager.save(MidOrder, newData); // 更新订单信息
-
         // 定义返佣流水数据
         const newCommissionFlow = {
           userId: userId,

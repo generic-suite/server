@@ -124,4 +124,20 @@ export class UserController {
       return await this.userService.changeDealPassword(req.user.userId, body);
     }
   }
+
+  // admin-修改密码 1: 登录密码 2: 提现密码
+  @UsePipes(new ValidationPipe()) // 使用管道验证
+  @UseGuards(new RbacGuard(role.ADMIN))
+  @UseGuards(AuthGuard('jwt'))
+  @Post('adminChangePassword')
+  async adminChangePassword(@Body() body: { type: number; userId: number; password: string }) {
+    const { userId, password } = body;
+    if (body.type === 1) {
+      // 修改登录密码
+      return await this.userService.updatePassword(userId, password);
+    } else {
+      // 修改提现密码
+      return await this.midUserService.updateField(userId, 'deal_pass', password);
+    }
+  }
 }

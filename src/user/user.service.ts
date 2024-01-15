@@ -124,19 +124,21 @@ export class UserService {
         msg: '旧密码不正确',
       };
     }
-    const password = changeBody.password;
-    // 制作密码盐
-    const passwordSalt = makeSalt();
-    // 制作密码
-    const hashPwd = encryptPassword(password, passwordSalt);
-    // 创建用户
-    const newUser = {
-      password: hashPwd,
-      passwordSalt,
-    };
-    // 保存用户
-    const createUser = await this.userRepository.update(userId, newUser);
-    return createUser;
+    const newUser = await this.updatePassword(userId, changeBody.password);
+    return newUser;
+    // const password = changeBody.password;
+    // // 制作密码盐
+    // const passwordSalt = makeSalt();
+    // // 制作密码
+    // const hashPwd = encryptPassword(password, passwordSalt);
+    // // 创建用户
+    // const newUser = {
+    //   password: hashPwd,
+    //   passwordSalt,
+    // };
+    // // 保存用户
+    // const createUser = await this.userRepository.update(userId, newUser);
+    // return createUser;
   }
 
   // 修改用户提现密码
@@ -169,6 +171,21 @@ export class UserService {
     return;
   }
 
+  // 修改密码
+  async updatePassword(userId: number, password: string): Promise<any> {
+    // 制作密码盐
+    const passwordSalt = makeSalt();
+    // 制作密码
+    const hashPwd = encryptPassword(password, passwordSalt);
+    // 创建用户
+    const newUser = {
+      password: hashPwd,
+      passwordSalt,
+    };
+    // 保存用户
+    const createUser = await this.userRepository.update(userId, newUser);
+    return;
+  }
   async enter() {
     // 创建一个异步任务
     const task = async () => {

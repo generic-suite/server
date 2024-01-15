@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, UsePipes } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, UsePipes, Request } from '@nestjs/common';
 import { MidWalletFlowService } from './mid-wallet-flow.service';
 import { CreateMidWalletFlowDto } from './dto/create-mid-wallet-flow.dto';
 import { UpdateMidWalletFlowDto } from './dto/update-mid-wallet-flow.dto';
@@ -23,6 +23,16 @@ export class MidWalletFlowController {
   @Get()
   findPage(@Query() query: any) {
     return this.midWalletFlowService.findPage(query);
+  }
+
+  // 获取该用户的所有流水
+  @UsePipes(new ValidationPipe()) // 使用管道验证
+  @UseGuards(new RbacGuard(role.HUMAN))
+  @UseGuards(AuthGuard('jwt'))
+  @Get('getList')
+  findUserPage(@Query() query: any, @Request() req: any) {
+    const userId = req.user.userId;
+    return this.midWalletFlowService.findUserPage(query, userId);
   }
 
   @Get(':id')

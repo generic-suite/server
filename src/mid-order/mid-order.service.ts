@@ -177,7 +177,17 @@ export class MidOrderService {
           freeze_experience_money: freeze_experience_money + '', // 冻结体验金
         });
         // 9. 创建订单
-        await transactionalEntityManager.save(MidOrder, newOrder);
+        const orderData = await transactionalEntityManager.save(MidOrder, newOrder);
+        // 定义流水数据
+        const newFlow = {
+          userId: userId,
+          username: username,
+          orderId: orderData.order_id,
+          type: 3, // 交易
+          status: 2, // 支出
+          price: +newOrder.order_amount + '', // 交易金额
+          beforePrice: +midUser.balance + '', // 交易前金额
+        };
       });
       return newOrder;
     } catch (error) {

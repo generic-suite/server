@@ -52,6 +52,14 @@ export class SysConfigTextService {
     const where = {
       ...otherParams,
     };
+    // 如果没有传入current，则默认查询所有数据
+    if (!query.current) {
+      const list = await this.sysConfigTextRepository.find({
+        where,
+      });
+      return list;
+    }
+
     const [list, total] = await this.sysConfigTextRepository.findAndCount({
       where,
       skip: pageSize * (current - 1),

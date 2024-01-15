@@ -20,7 +20,7 @@ import { AuthService } from '../auth/auth.service';
 import { UserService } from './user.service';
 import { MidUserService } from '../mid-user/mid-user.service';
 import { ValidationPipe } from '../pipe/validation/validation.pipe';
-import { RegisterInfoDTO } from './dto/user.dto';
+import { RegisterInfoDTO, ChangePasswordDTO } from './dto/user.dto';
 import { RbacGuard } from 'src/guards/rbac/rbac.guard';
 import { roleConstans as role } from 'src/auth/constants';
 @Controller('user')
@@ -107,5 +107,21 @@ export class UserController {
       data: user,
       success: true,
     };
+  }
+
+  // 修改登录密码
+  @UsePipes(new ValidationPipe()) // 使用管道验证
+  @UseGuards(new RbacGuard(role.HUMAN))
+  @UseGuards(AuthGuard('jwt'))
+  @Post('changePassword')
+  async changePassword(@Body() body: ChangePasswordDTO, @Request() req: any) {
+    console.log(body);
+    if (body.type === 1) {
+      // 修改登录密码
+      return await this.userService.changeLoginPassword(req.user.userId, body);
+    } else {
+      // 修改提现密码
+      return await this.userService.changeDealPassword(req.user.userId, body);
+    }
   }
 }

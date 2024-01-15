@@ -13,3 +13,14 @@ export class RegisterInfoDTO {
   readonly mobile: number;
   readonly role?: string | number;
 }
+
+export class ChangePasswordDTO {
+  @IsNumber({}, { message: '类型必须是数字' })
+  readonly type: number; // 1:登录密码 2:交易密码
+  @IsNotEmpty({ message: '旧密码不能为空' })
+  readonly oldPassword: string;
+  @IsNotEmpty({ message: '密码不能为空' })
+  readonly password: string;
+  @IsNotEmpty({ message: '确认密码不能为空' })
+  readonly repassword: string;
+}

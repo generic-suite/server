@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
 // import { UserController } from './user.controller';
 
-
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
+import { MidUserModule } from 'src/mid-user/mid-user.module';
 @Module({
-  imports: [TypeOrmModule.forFeature([User])], // 导入数据库
+  imports: [TypeOrmModule.forFeature([User]), MidUserModule], // 导入数据库
   providers: [UserService],
   exports: [UserService],
 })

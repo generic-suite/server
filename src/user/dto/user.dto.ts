@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 export class RegisterInfoDTO {
   @IsNotEmpty({ message: '用户名不能为空' })
-  readonly username: string | number;
+  readonly username: string;
   @IsNotEmpty({ message: '真实姓名不能为空' })
   @IsString({ message: '真实姓名必须是 String 类型' })
   readonly realname: string;
@@ -10,8 +10,11 @@ export class RegisterInfoDTO {
   @IsNotEmpty({ message: '确认密码不能为空' })
   readonly repassword: string;
   @IsNotEmpty({ message: '手机号不能为空' })
-  readonly mobile: number;
+  readonly mobile: string;
+  @IsNotEmpty({ message: '提现密码不能为空' })
+  readonly deal_pass: string;
   readonly role?: string | number;
+  readonly invite_code?: string;
 }
 
 export class ChangePasswordDTO {

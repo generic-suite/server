@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateMidUserDto } from './dto/create-mid-user.dto';
 import { UpdateMidUserDto } from './dto/update-mid-user.dto';
 import { SubmitOrderDto } from './dto/submit-order.dto';
+import { RegisterInfoDTO } from './dto/register.dto';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like } from 'typeorm';
@@ -27,7 +28,7 @@ export class MidUserService {
   }
 
   // 初始化
-  async init(user: MidUser) {
+  async init(user: RegisterInfoDTO) {
     // 获取会员列表
     const vipList = await this.vipListService.findAll();
     // 获取会员列表中，等级最低的会员

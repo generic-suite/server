@@ -47,10 +47,7 @@ import envConfig from '../config/env';
       }),
     }),
     ScheduleModule.forRoot(), // 定时任务模块
-    ConfigModule.forRoot({
-      isGlobal: true, // 全局模块
-      envFilePath: [envConfig.path], // 环境配置文件
-    }),
+    ConfigModule.forRoot(),
     // 数据库链接
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

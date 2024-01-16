@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ChangePasswordDTO } from './dto/user.dto';
-
+import { RegisterInfoDTO, ChangePasswordDTO } from './dto/user.dto';
 import { makeSalt, encryptPassword } from '../utils/cryptogram';
 // 连接数据库
 import { InjectRepository } from '@nestjs/typeorm';
@@ -40,7 +39,7 @@ export class UserService {
    * 注册
    * @param requestBody 请求体
    */
-  async register(requestBody: any): Promise<any> {
+  async register(requestBody: RegisterInfoDTO): Promise<any> {
     const { username, realname, password, repassword, mobile, deal_pass, invite_code } = requestBody;
     if (password !== repassword) {
       return {

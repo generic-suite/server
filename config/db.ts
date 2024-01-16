@@ -1,4 +1,4 @@
-// config/db.ts
+import { env } from 'process';
 const productConfig = {
   redis: {
     port: '6379',

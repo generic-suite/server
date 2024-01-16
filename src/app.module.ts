@@ -57,6 +57,7 @@ import envConfig from '../config/env';
       inject: [ConfigService],
       useFactory: async (config) => {
         const isProd = config.get('NODE_ENV') === 'production';
+        console.log('sasafafs', config.get('DB_USER'));
         return {
           type: 'mysql', // 数据库类型
           host: config.get('DB_HOST'), // 主机，默认为localhost

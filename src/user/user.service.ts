@@ -90,7 +90,7 @@ export class UserService {
       invite_code: invite_code, // 邀请码
     };
     // 触发事件
-    this.eventEmitter.emit('new_user_register', resUser);
+    // this.eventEmitter.emit('new_user_register', resUser);
     // 用户业务表初始化用户
     await this.midUserService.init(resUser);
     return resUser;

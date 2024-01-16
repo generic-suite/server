@@ -56,6 +56,7 @@ import envConfig from '../config/env';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (config) => {
+        console.log('processprocessprocessprocessprocess', config.get('NODE_ENV'), config.get('DB_HOST'));
         const isProd = config.get('NODE_ENV') === 'production';
         return {
           type: 'mysql', // 数据库类型

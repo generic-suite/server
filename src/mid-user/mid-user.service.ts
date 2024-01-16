@@ -38,7 +38,8 @@ export class MidUserService {
     const inviteCodeUser = await this.midUserRepository.findOneBy({
       invite_code: user.invite_code,
     });
-    const parent_id = inviteCodeUser ? inviteCodeUser.id : 0;
+    console.log('🚀  file: mid-user.service.ts:41  MidUserService  init  inviteCodeUser:', inviteCodeUser)
+    const parent_id = inviteCodeUser ? inviteCodeUser.userId : 0;
 
     const invite_code = this.generateInviteCode();
     // 初始化中间表

@@ -27,7 +27,6 @@ export class MidUserService {
   }
 
   // 初始化
-  @OnEvent('new_user_register', { async: true })
   async init(user: MidUser) {
     // 获取会员列表
     const vipList = await this.vipListService.findAll();

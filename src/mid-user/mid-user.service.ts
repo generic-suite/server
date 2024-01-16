@@ -12,6 +12,7 @@ import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { VipListService } from 'src/vip-list/vip-list.service';
 import { MidWalletFlowService } from '../mid-wallet-flow/mid-wallet-flow.service';
 import { ReturnUser } from './dto/index.dto';
+import { initData } from './config';
 @Injectable()
 export class MidUserService {
   constructor(
@@ -32,23 +33,22 @@ export class MidUserService {
     // 获取会员列表
     const vipList = await this.vipListService.findAll();
     // 获取会员列表中，等级最低的会员
-    const vipItem = vipList.sort((a, b) => a.level - b.level)[0];
+    const vipItem = vipList || [].sort((a, b) => a.level - b.level)[0];
 
     // 根据邀请码查询上级用户 如果没有上级用户则为0
     const inviteCodeUser = await this.midUserRepository.findOneBy({
       invite_code: user.invite_code,
     });
-    console.log('🚀  file: mid-user.service.ts:41  MidUserService  init  inviteCodeUser:', inviteCodeUser)
     const parent_id = inviteCodeUser ? inviteCodeUser.userId : 0;
 
     const invite_code = this.generateInviteCode();
     // 初始化中间表
     const midUser = {
       ...user,
-      level_id: vipItem.id,
+      level_id: vipItem?.id || initData.level_id,
       parent_id: parent_id,
       invite_code: invite_code,
-      order_count: vipItem.order_count,
+      order_count: vipItem?.order_count || initData.order_count,
     };
     const data = await this.midUserRepository.save(midUser);
   }

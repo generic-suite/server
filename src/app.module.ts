@@ -57,13 +57,12 @@ import envConfig from '../config/env';
       inject: [ConfigService],
       useFactory: async (config) => {
         const isProd = config.get('NODE_ENV') === 'production';
-        console.log('sasafafs', config.get('DB_USER'));
         return {
           type: 'mysql', // 数据库类型
           host: config.get('DB_HOST'), // 主机，默认为localhost
           port: config.get('DB_PORT'), // 端口，默认为3306
-          username: 'root' || config.get('DB_USER'), // 用户名
-          password: '123456' || config.get('DB_PASSWORD'), // 密码
+          username: config.get('DB_USER') || 'root', // 用户名
+          password: config.get('DB_PASSWORD') || '123456', // 密码
           database: config.get('DB_DATABASE'), // 数据库名
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
           synchronize: !isProd,

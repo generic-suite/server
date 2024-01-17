@@ -28,7 +28,6 @@ import { MidUserModule } from './mid-user/mid-user.module';
 import { MidWalletFlowModule } from './mid-wallet-flow/mid-wallet-flow.module';
 import { MidWithdrawModule } from './mid-withdraw/mid-withdraw.module';
 import { CustomerModule } from './customer/customer.module';
-import envConfig from '../config/env';
 
 @Module({
   imports: [
@@ -49,14 +48,14 @@ import envConfig from '../config/env';
     ScheduleModule.forRoot(), // 定时任务模块
     ConfigModule.forRoot({
       isGlobal: true, // 全局模块
-      envFilePath: [envConfig.path], // 环境配置文件
+      envFilePath: [`.env.${process.env.NODE_ENV}`, '.env'], // 环境配置文件
     }),
     // 数据库链接
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: async (config) => {
-        console.log('processprocessprocessprocessprocess', config.get('NODE_ENV'), config.get('DB_HOST'));
+        console.log('processprocessprocessprocessprocess', process.env.NODE_ENV, config.get('NODE_ENV'));
         const isProd = config.get('NODE_ENV') === 'production';
         return {
           type: 'mysql', // 数据库类型

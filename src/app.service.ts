@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { UserService } from './user/user.service';
-import envConfig from '../config/env';
 
 import { EventEmitter2 } from '@nestjs/event-emitter';
 

@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       // 生产环境
-      name: 'prod',
+      name: 'server',
       // 项目启动入口文件
       script: './dist/src/main.js',
       // 项目环境变量

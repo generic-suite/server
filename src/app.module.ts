@@ -65,7 +65,7 @@ import { CustomerModule } from './customer/customer.module';
           password: config.get('DB_PASSWORD') || '123456', // 密码
           database: config.get('DB_DATABASE'), // 数据库名
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
-          synchronize: !isProd,
+          synchronize: !isProd || config.get('DB_SYNC') === 'true',
           timezone: '+08:00', // 服务器上配置的时区
         };
       },

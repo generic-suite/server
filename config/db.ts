@@ -1,22 +1,15 @@
 import { env } from 'process';
-const productConfig = {
-  redis: {
-    port: '6379',
-    host: '127.0.0.1',
-    db: 'generic-redis',
-    password: '',
-  },
+
+const redisConfig = {
+  port: parseInt(process.env.REDIS_PORT || '6379', 10),
+  host: process.env.REDIS_HOST || '127.0.0.1',
+  password: process.env.REDIS_PASSWORD || '',
+  // 保留原有的 db 字段以防万一，但优先使用环境变量配置
+  db: 0, 
 };
 
-const localConfig = {
-  redis: {
-    port: '6379',
-    host: 'localhost',
-    db: 'harley',
-    password: '',
-  },
+const config = {
+  redis: redisConfig
 };
-
-const config = process.env.NODE_ENV === 'production' ? productConfig : localConfig;
 
 export default config;
